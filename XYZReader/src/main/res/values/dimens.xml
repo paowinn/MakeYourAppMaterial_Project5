@@ -8,4 +8,13 @@
     <dimen name="fab_press_translation_z">6dp</dimen>
     <dimen name="fab_margin">24dp</dimen>
 
+    <!-- App Bar -->
+    <dimen name="app_bar_padding">16dp</dimen>
+    <!-- Needed if we aren't including the Material Design Library -->
+    <dimen name="appbar_elevation">4dp</dimen>
+
+    <!-- Main Activity -->
+    <dimen name="app_bar_height">56dp</dimen> <!-- Default App Bar height for mobile in portrait -->
+    <dimen name="screen_margin">16dp</dimen>
+
 </resources>
