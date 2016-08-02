@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -49,6 +50,7 @@ public class ArticleDetailFragment extends Fragment implements
     //private int mStatusBarFullOpacityBottom;
     private CollapsingToolbarLayout mCollapsingToolbar;
     String mArticleTitle = "";
+    Spanned mArticleBody, mArticleByLine;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -174,10 +176,14 @@ public class ArticleDetailFragment extends Fragment implements
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText("Some sample text")
-                        .getIntent(), getString(R.string.action_share)));
+
+                if(mArticleTitle != null && mArticleByLine != null && mArticleBody != null) {
+                    startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                            .setType("text/plain")
+                            .setSubject(mArticleTitle + " - " + mArticleByLine)
+                            .setText(mArticleBody)
+                            .getIntent(), getString(R.string.action_share)));
+                }
             }
         });
 
@@ -231,15 +237,17 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.animate().alpha(1);
             mArticleTitle = mCursor.getString(ArticleLoader.Query.TITLE);
             titleView.setText(mArticleTitle);
-            bylineView.setText(Html.fromHtml(
+            mArticleByLine = Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
                             System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
                             DateUtils.FORMAT_ABBREV_ALL).toString()
                             + " by <font color='#ffffff'>"
                             + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                            + "</font>"));
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+                            + "</font>");
+            bylineView.setText(mArticleByLine);
+            mArticleBody = Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY));
+            bodyView.setText(mArticleBody);
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
